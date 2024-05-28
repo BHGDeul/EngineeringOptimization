@@ -7,13 +7,15 @@ import numpy as np
 class Kite():
     def __init__(self):
         # all constant design parameters of the kite
-        self.v_w_n = 10  # np.linspace(5,20,50)
+        self.v_w_n = 10  # wind speed, make design variable later on
 
         # TODO: make A_proj a design variable
-        self.A_proj = 20.79  # 21.57 #np.linspace(15,35,50) #19.8 #
+        self.A_proj = 20.79
 
         self.rho = 1.18
-        self.lc = 250
+        self.lc = 250 # what is this?
+
+        # Start assignment with aerodynamic parameters as constants for simplification
         self.CL_out = 1.0
         self.CD_out = 0.2
         self.CL_in = 0.14

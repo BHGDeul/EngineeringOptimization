@@ -53,8 +53,8 @@ lim = data['max_reel_speed'] / data['v_w_n']
 #     lim = data['max_reel_speed'] / data['v_w_n']
 # else:
 #     lim = 2.0
-resolution = 1000
-plot_gamma_data['gamma_in'] = np.linspace(0.01, lim, resolution)
+resolution = 100
+plot_gamma_data['gamma_in'] = np.linspace(2, lim, resolution)
 plot_gamma_data['gamma_out'] = np.linspace(0.01, 1, resolution)
 
 ## Set empty arrays ##
@@ -63,13 +63,15 @@ plot_gamma_data['power_array_e'] = np.zeros((resolution, resolution))
 ## Initiate counters ##
 ci = 0
 cj = 0
-for j in plot_gamma_data['gamma_out']:
-    for i in plot_gamma_data['gamma_in']:
-        plot_gamma_data['power_array_m'][cj][ci] = data['P_w'] * data['A_proj'] * (
-                data['F_out'] * (1 - j) ** 2 - (data['F_in'] * (1 + i) ** 2)) * ((j * i) / (j + i))
-        plot_gamma_data['power_array_e'][cj][ci] = data['P_w'] * data['A_proj'] * (
-                data['eff_out'] * data['F_out'] * (1 - j) ** 2 - (data['F_in'] * (1 + i) ** 2) / data[
-            'eff_in']) * ((j * i) / (j + i))
+for cj, gamma_out in enumerate(plot_gamma_data['gamma_out'] ):
+    for ci, gamma_in in enumerate(plot_gamma_data['gamma_in'] ):
+        # plot_gamma_data['power_array_m'][cj][ci] = data['P_w'] * data['A_proj'] * (
+        #         data['F_out'] * (1 - j) ** 2 - (data['F_in'] * (1 + i) ** 2)) * ((j * i) / (j + i))
+
+        plot_gamma_data['power_array_e'][ci][cj] = data['P_w'] * data['A_proj'] * (
+                data['eff_out'] * data['F_out'] * (1 - gamma_out) ** 2 - (data['F_in'] * \
+                (1 + gamma_in) ** 2) / data['eff_in']) * ((gamma_out * gamma_in) / (gamma_out + gamma_in))
+
         ci += 1
 
     cj += 1
@@ -81,21 +83,32 @@ for j in plot_gamma_data['gamma_out']:
 data['P_elec_opt_gamma'] = np.amax(plot_gamma_data['power_array_e'])
 (a, b) = np.where(plot_gamma_data['power_array_e'] == data['P_elec_opt_gamma'])
 
-data['gamma_out_n'] = plot_gamma_data['gamma_out'][a][0]
-data['gamma_in_n'] = plot_gamma_data['gamma_in'][b][0]
+data['gamma_out_n'] = plot_gamma_data['gamma_out'][b][0]
+data['gamma_in_n'] = plot_gamma_data['gamma_in'][a][0]
 
 print(data['gamma_out_n'], data['gamma_in_n'], data['P_elec_opt_gamma'])
 
 
 
 # meshgrid for plotting
-gamma_out_mesh, gamma_in_mesh = np.meshgrid(plot_gamma_data['gamma_out'], plot_gamma_data['gamma_in'])
+# gamma_out_mesh, gamma_in_mesh = np.meshgrid(plot_gamma_data['gamma_out'], plot_gamma_data['gamma_in'])
 
 # electrical power array for gammas
-plt.figure(figsize=(10, 8))
-contour = plt.contourf(gamma_out_mesh, gamma_in_mesh, plot_gamma_data['power_array_e'], levels=50, cmap='viridis')
+plt.figure(figsize=(12, 10))
+contour = plt.contourf(plot_gamma_data['gamma_out'], plot_gamma_data['gamma_in'], plot_gamma_data['power_array_e'], levels=200, cmap='viridis')
 plt.colorbar(contour, label='Electrical Power (W)')
 plt.xlabel('Gamma Out')
 plt.ylabel('Gamma In')
 plt.title('Electrical Power Distribution')
-plt.show()
+
+# true maximum point
+plt.scatter(data['gamma_out_n'], data['gamma_in_n'], color='red', label='True Max Power', zorder=5)
+
+# Annotate the points
+plt.annotate(f'True Max\n({data["gamma_out_n"]:.2f}, {data["gamma_in_n"]:.2f})', xy=(data['gamma_out_n'], data['gamma_in_n']),
+             xytext=(data['gamma_out_n'] + 0.1, data['gamma_in_n'] + 0.1),
+             arrowprops=dict(facecolor='red', shrink=0.05))
+
+plt.legend()
+
+# plt.show()

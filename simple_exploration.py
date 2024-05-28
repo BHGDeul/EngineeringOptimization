@@ -54,7 +54,7 @@ lim = data['max_reel_speed'] / data['v_w_n']
 # else:
 #     lim = 2.0
 resolution = 100
-plot_gamma_data['gamma_in'] = np.linspace(2, lim, resolution)
+plot_gamma_data['gamma_in'] = np.linspace(0.01, lim, resolution)
 plot_gamma_data['gamma_out'] = np.linspace(0.01, 1, resolution)
 
 ## Set empty arrays ##
@@ -111,4 +111,4 @@ plt.annotate(f'True Max\n({data["gamma_out_n"]:.2f}, {data["gamma_in_n"]:.2f})',
 
 plt.legend()
 
-# plt.show()
+plt.show()

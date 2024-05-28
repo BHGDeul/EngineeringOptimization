@@ -14,6 +14,7 @@ def calculate_opt_gamma_nominal(data):
     else:
         lim = 2
     lim = 2.0
+
     plot_gamma_data['gamma_in'] = np.linspace(0.01, lim, 100)
     plot_gamma_data['gamma_out'] = np.linspace(0.01, 1, 100)
 

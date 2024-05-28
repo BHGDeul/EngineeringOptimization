@@ -46,6 +46,7 @@ def iteration_aero_power(area_diff, A_proj, TAS):
         data = get_initial_data()
         data['F_out'] = CL3_CD2_average_out
         data['F_in'] = CD_average_in
+
         data['CL_out'] = CL_average_out
         data['CD_out'] = CD_average_out
         # data['CL_in'] = CL_average_in

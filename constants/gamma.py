@@ -1,7 +1,6 @@
-
-from InputV2 import *
 import numpy as np
-from Input import *
+
+import constants.input
 
 
 ### This function finds the optimal gamma for nominal flight conditions defined in Input.py and plots this on a heat map ###
@@ -10,16 +9,13 @@ def calculate_opt_gamma_nominal(data):
     plot_gamma_data = {}
     ## Define gamma range ##
     # Prohibits reel-in speed from exceeding max reeling speed #
-    if max_reel_speed <= 2* data['v_w_n']:
+    if data['max_reel_speed'] <= 2* data['v_w_n']:
         lim = data['max_reel_speed'] / data['v_w_n']
     else:
         lim = 2
 
     plot_gamma_data['gamma_in'] = np.linspace(0.01, lim, 100)
     plot_gamma_data['gamma_out'] = np.linspace(0.01, 1, 100)
-
-    # gamma_in = np.linspace(1,3,3)
-    # gamma_out = np.linspace(1,3,3)
 
     ## Set empty arrays ##
     plot_gamma_data['power_array_m'] = np.zeros((100, 100))
@@ -48,7 +44,7 @@ def calculate_opt_gamma_nominal(data):
     data['gamma_out_n'] = plot_gamma_data['gamma_out'][a][0]
     data['gamma_in_n'] = plot_gamma_data['gamma_in'][b][0]
 
-    return data, plot_gamma_data
+    return data
 
 
 ### This function calculates the traction forces for nominal flight conditions ###
@@ -114,3 +110,6 @@ def run_nominal_analysis(data):
     print('')
     return data
 
+if __name__ == '__main__':
+    data = constants.input.get_initial_data()
+    calculate_opt_gamma_nominal(data)

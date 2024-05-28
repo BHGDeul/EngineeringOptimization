@@ -22,7 +22,6 @@ P_w = 0.5*v_w_n**3*rho # Wind Power
 
 import numpy as np
 
-
 def get_initial_data():
     data = {}
     data['v_w_adj'] = np.linspace(0.5, 25, 100)
@@ -31,6 +30,9 @@ def get_initial_data():
 
     BI = True
     if BI is False:
+
+        # TODO: waar de fuck komt dit vandaan
+
         data['v_w_n'] = 10  # np.linspace(5,15,20) #10 #10.44#np.linspace(5,20,50)
         data['CL_out'] = 1.0720464426912995  # np.linspace(0.6,1.5,50)
         data[
@@ -46,6 +48,7 @@ def get_initial_data():
         data['eff_out'] = 0.652  # 0.639
         data['gamma_out_n'] = 0.3926
         data['gamma_in_n'] = 1.8973
+
     elif BI is True:
         data['v_w_n'] = 10  # np.linspace(5,15,20) #10 #10.44#np.linspace(5,20,50)
         data['CL_out'] = 1.06  # np.linspace(0.6,1.5,50)
@@ -89,4 +92,4 @@ def get_initial_data():
     # data['gamma_out_n'] = 0.3926
     # data['gamma_in_n'] = 1.8973
 
-    return data 
+    return data

@@ -72,6 +72,26 @@ class Kite():
 
         return self
 
+    def calculate_tether_limit_reel_speeds(self, gamma_in, gamma_out):
+        """
+        Obtained from calc_tether_force.py
+        :param gamma_in:
+        :param gamma_out:
+        :return:
+        """
+        gamma_out_n, gamma_in_n = calculate_opt_gamma_nominal()  # nominal reel out from optimal_gamma.py
+
+        P_w = v_w * 0.5 * rho ** 3
+        mu = v_w / v_w_n
+        f_c_mu = ((1 / (mu ** 2)) * (1 - gamma_out_n) ** 2 - (F_in / F_out) * (1 + gamma_in) ** 2) * (
+                (gamma_in * (mu - 1 + gamma_out_n)) / (mu * gamma_in + mu - 1 + gamma_out_n))
+
+        # TODO: nested optimization?
+        max_f_c =
+        pass  # maximization of f_c_mu
+        P_c = P_w * max_f_c  # what is P_c?
+
+        return max_f_c, P_c
 
 if __name__ == '__main__':
     obj = Kite()

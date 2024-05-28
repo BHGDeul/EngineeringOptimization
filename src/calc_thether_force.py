@@ -36,3 +36,4 @@ def calculate_tether_limit_reel_speeds(step):
         cj = 0
     # print (gamma_in_max_f_c,gamma_out_max_f_c,v_w)
     return gamma_in_max_f_c, gamma_out_max_f_c, v_w, P_c
+

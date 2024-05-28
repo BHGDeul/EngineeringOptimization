@@ -223,6 +223,7 @@ def calculate_cycle_param(data):
 
     return data
 
+
 ### This function looks for gamma outs to lower the traction force, and directly updates the area accordingly
 def evaluate_tether_force(data):
     data['gamma_out_n_init'] = data['gamma_out_n']

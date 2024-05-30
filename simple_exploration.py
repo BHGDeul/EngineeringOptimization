@@ -137,3 +137,43 @@ plt.annotate(f'Max\n({data["gamma_out_n"]:.2f}, {data["gamma_in_n"]:.2f})', xy=(
 plt.legend()
 
 plt.show()
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define a function to calculate electrical power
+def electrical_power(gamma_out, gamma_in, data):
+    power = data['P_w'] * data['A_proj'] * (
+        data['eff_out'] * data['F_out'] * (1 - gamma_out) ** 2 -
+        (data['F_in'] * (1 + gamma_in) ** 2) / data['eff_in']) * ((gamma_out * gamma_in) / (gamma_out + gamma_in))
+    return power
+
+# gamma ranges for plotting
+gamma_out_range = np.linspace(0.01, 1, 100)
+gamma_in_range = np.linspace(0.01, lim, 100)
+
+# electrical power vs gamma_out for a fixed gamma_in
+plt.figure(figsize=(12, 6))
+gamma_in_fixed = 0.5
+power_values_out = [electrical_power(g, gamma_in_fixed, data) for g in gamma_out_range]
+plt.plot(gamma_out_range, power_values_out, label=f'Gamma_in = {gamma_in_fixed}')
+plt.xlabel('Gamma Out')
+plt.ylabel('Electrical Power (W)')
+plt.title('Electrical Power vs Gamma Out for fixed Gamma In')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+#electrical power vs gamma_in for a fixed gamma_out
+plt.figure(figsize=(12, 6))
+gamma_out_fixed = 0.5
+power_values_in = [electrical_power(gamma_out_fixed, g, data) for g in gamma_in_range]
+plt.plot(gamma_in_range, power_values_in, label=f'Gamma_out = {gamma_out_fixed}')
+plt.xlabel('Gamma In')
+plt.ylabel('Electrical Power (W)')
+plt.title('Electrical Power vs Gamma In for fixed Gamma Out')
+plt.legend()
+plt.grid(True)
+plt.show()

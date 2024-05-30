@@ -1,7 +1,7 @@
 from constants.input import get_initial_data
 import numpy as np
 import matplotlib.pyplot as plt
-
+from scipy.optimize import minimize
 # data = get_initial_data()
 data = {}
 data['v_w_adj'] = np.linspace(0.5, 25, 100)
@@ -57,6 +57,7 @@ resolution = 100
 plot_gamma_data['gamma_in'] = np.linspace(0.01, lim, resolution)
 plot_gamma_data['gamma_out'] = np.linspace(0.01, 1, resolution)
 
+""""Original"""
 ## Set empty arrays ##
 plot_gamma_data['power_array_m'] = np.zeros((resolution, resolution))
 plot_gamma_data['power_array_e'] = np.zeros((resolution, resolution))
@@ -76,22 +77,46 @@ for cj, gamma_out in enumerate(plot_gamma_data['gamma_out'] ):
 
     cj += 1
     ci = 0
+#
+#     ## Find maximal mechanical power  ##
+#
+# # data['max_power_m'] = np.amax(plot_gamma_data['power_array_m'])
+# data['P_elec_opt_gamma'] = np.amax(plot_gamma_data['power_array_e'])
+# (a, b) = np.where(plot_gamma_data['power_array_e'] == data['P_elec_opt_gamma'])
+#
+# data['gamma_out_n'] = plot_gamma_data['gamma_out'][b][0]
+# data['gamma_in_n'] = plot_gamma_data['gamma_in'][a][0]
+#
+# print(data['gamma_out_n'], data['gamma_in_n'], data['P_elec_opt_gamma'])
 
-    ## Find maximal mechanical power  ##
 
-# data['max_power_m'] = np.amax(plot_gamma_data['power_array_m'])
-data['P_elec_opt_gamma'] = np.amax(plot_gamma_data['power_array_e'])
-(a, b) = np.where(plot_gamma_data['power_array_e'] == data['P_elec_opt_gamma'])
+"""Optimisation"""
+# Objective function to minimize (negative of electrical power)
+def objective(gamma):
+    gamma_out, gamma_in = gamma
+    power = data['P_w'] * data['A_proj'] * (
+        data['eff_out'] * data['F_out'] * (1 - gamma_out) ** 2 -
+        (data['F_in'] * (1 + gamma_in) ** 2) / data['eff_in']) * ((gamma_out * gamma_in) / (gamma_out + gamma_in))
+    return -power  # Negative because we want to maximize the power
 
-data['gamma_out_n'] = plot_gamma_data['gamma_out'][b][0]
-data['gamma_in_n'] = plot_gamma_data['gamma_in'][a][0]
+# Define bounds for gamma_out and gamma_in
+lim = data['max_reel_speed'] / data['v_w_n']
+bounds = [(0.01, 1), (0.01, lim)]
 
-print(data['gamma_out_n'], data['gamma_in_n'], data['P_elec_opt_gamma'])
+# Initial guess
+initial_guess = [0.5, 0.5]
 
+# Perform the optimization
+result = minimize(objective, initial_guess, bounds=bounds, method='L-BFGS-B')
 
+# Extract the optimal values
+optimal_gamma_out, optimal_gamma_in = result.x
+max_electrical_power = -result.fun
 
-# meshgrid for plotting
-# gamma_out_mesh, gamma_in_mesh = np.meshgrid(plot_gamma_data['gamma_out'], plot_gamma_data['gamma_in'])
+# Update the data dictionary with optimal values
+data['gamma_out_n'] = optimal_gamma_out
+data['gamma_in_n'] = optimal_gamma_in
+data['P_elec_opt_gamma'] = max_electrical_power
 
 # electrical power array for gammas
 plt.figure(figsize=(12, 10))
@@ -101,11 +126,11 @@ plt.xlabel('Gamma Out')
 plt.ylabel('Gamma In')
 plt.title('Electrical Power Distribution')
 
-# true maximum point
-plt.scatter(data['gamma_out_n'], data['gamma_in_n'], color='red', label='True Max Power', zorder=5)
+# maximum point
+plt.scatter(data['gamma_out_n'], data['gamma_in_n'], color='red', label='Max Power', zorder=5)
 
 # Annotate the points
-plt.annotate(f'True Max\n({data["gamma_out_n"]:.2f}, {data["gamma_in_n"]:.2f})', xy=(data['gamma_out_n'], data['gamma_in_n']),
+plt.annotate(f'Max\n({data["gamma_out_n"]:.2f}, {data["gamma_in_n"]:.2f})', xy=(data['gamma_out_n'], data['gamma_in_n']),
              xytext=(data['gamma_out_n'] + 0.1, data['gamma_in_n'] + 0.1),
              arrowprops=dict(facecolor='red', shrink=0.05))
 

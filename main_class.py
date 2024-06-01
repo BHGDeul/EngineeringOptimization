@@ -3,6 +3,7 @@ Define here in (pseudo) code the structure of the model
 """
 
 import numpy as np
+from scipy.optimize import minimize, NonlinearConstraint
 
 class Kite():
     def __init__(self):
@@ -87,11 +88,12 @@ class Kite():
                 (gamma_in * (mu - 1 + gamma_out_n)) / (mu * gamma_in + mu - 1 + gamma_out_n))
 
         # TODO: nested optimization?
-        max_f_c =
-        pass  # maximization of f_c_mu
+        max_f_c = pass  # maximization of f_c_mu
         P_c = P_w * max_f_c  # what is P_c?
 
         return max_f_c, P_c
+
+
 
 if __name__ == '__main__':
     obj = Kite()

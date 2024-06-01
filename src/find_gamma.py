@@ -1,4 +1,4 @@
-from setup import Kite
+from main_class import Kite
 
 def calculate_opt_gamma_nominal(self):
     ## Define gamma range ##

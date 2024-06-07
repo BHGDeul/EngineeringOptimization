@@ -16,7 +16,7 @@ class Kite():
         self.rho = 1.18
         self.lc = 250 # what is this?
 
-        # Start assignment with aerodynamic parameters as constants for simplification
+        # Start assignment with aerodynamic parameters as old_constants for simplification
         self.CL_out = 1.0
         self.CD_out = 0.2
         self.CL_in = 0.14

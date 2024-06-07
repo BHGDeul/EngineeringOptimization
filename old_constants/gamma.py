@@ -1,6 +1,6 @@
 import numpy as np
 
-import constants.input
+import old_constants.input
 
 
 ### This function finds the optimal gamma for nominal flight conditions defined in Input.py and plots this on a heat map ###
@@ -111,5 +111,5 @@ def run_nominal_analysis(data):
     return data
 
 if __name__ == '__main__':
-    data = constants.input.get_initial_data()
+    data = old_constants.input.get_initial_data()
     calculate_opt_gamma_nominal(data)

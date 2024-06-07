@@ -1,6 +1,6 @@
-from constants.input import *
+from old_constants.input import *
 from Optimal_gamma import *
-from constants.limit import *
+from old_constants.limit import *
 
 
 def calculate_tether_limit_reel_speeds(step):

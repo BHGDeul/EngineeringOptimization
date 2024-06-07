@@ -1,5 +1,5 @@
 import numpy as np
-from constants.input import *
+from old_constants.input import *
 
 # assume Power and Tether Limit are reached at the same time
 

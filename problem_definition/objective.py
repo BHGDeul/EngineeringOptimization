@@ -9,9 +9,9 @@ def power_output(x):
     power = P_w * A_proj * (
         data['eff_out'] * data['F_out'] * (1 - gamma_out) ** 2 -
         (data['F_in'] * (1 + gamma_in) ** 2) / data['eff_in']) * ((gamma_out * gamma_in) / (gamma_out + gamma_in))
-    return -power  # Negative because we want to maximize the power
+    return power
 
 def objective(x):
     P_ref = data['baseline_power']
     A_ref = data['baseline_area']
-    return power_output(x) / P_ref + x[0] / A_ref
+    return -1 * power_output(x) / P_ref + x[0] / A_ref

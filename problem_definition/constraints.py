@@ -4,8 +4,8 @@ import numpy as np
 def constraint_traction(x):
     # TODO: rewrite in negative-null form
     # Assume gamma_in and gamma_out are the nominal values
-    gamma_in, gamma_out = x[0], x[1]
-    a_elev_out, a_elev_in = x[2], x[3]
+    gamma_in, gamma_out = x[1], x[2]
+    a_elev_out, a_elev_in = x[3], x[4]
     v_w_n = x[5]
 
     T_out_elevation = 0.5 * data['rho'] * v_w_n ** 2 * x[0] * (
@@ -17,6 +17,6 @@ def constraint_traction(x):
     return T_out_elevation, T_in_elevation
 
 def constraint_reel_speed(x):
-    gamma_in, gamma_out = x[1], x[2]
+    gamma_out = x[2]
     v_w_n = x[5]
-    return gamma_in, gamma_out / data['max_reel_speed'] / v_w_n - 1
+    return gamma_out / data['max_reel_speed'] / v_w_n - 1

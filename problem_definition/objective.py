@@ -5,19 +5,21 @@ def power_output(x):
     a_elev_in = x[3]
     a_elev_out = x[4]
     A_proj = x[0]
+    # v_w_n = x[5]
 
-    P_w = 0.5 * x[5] ** 3 * data['rho']  # Wind Power
+    P_w = 0.5 * v_w_n ** 3 * rho  # Wind Power
 
     # TODO: do aerodynamic parameters vary with projected area?
 
     power = P_w * A_proj * (
-        eff_out * F_out * (np.cos(a_elev_out) - gamma_out) ** 2 -
-        (F_in * (gamma_in ** 2 + 2 * np.cos(a_elev_in) * gamma_in + 1)) / eff_in) * (
-        (gamma_out * gamma_in) / (gamma_out + gamma_in))
+            eff_out * F_out * (np.cos(a_elev_out) - gamma_out) ** 2 -
+            (F_in * (gamma_in ** 2 + 2 * np.cos(a_elev_in) * gamma_in + 1)) / eff_in) * (
+                    (gamma_out * gamma_in) / (gamma_out + gamma_in))
 
     return power
 
 def objective(x):
     P_ref = baseline_power
     A_ref = baseline_area
-    return -1 * power_output(x) / P_ref + x[0] / A_ref
+    return -power_output(x)
+    #return -1 * power_output(x) / P_ref + x[0] / A_ref

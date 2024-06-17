@@ -1,50 +1,36 @@
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import minimize, NonlinearConstraint, LinearConstraint
 
 from constants.constants import *
 
-
-# Vector of design variables
-x = np.zeros(6)
-# A_proj    0
-# gamma_in  1
-# gamma_out 2
-# elev_in   3
-# elev_out  4
-# v_wn      5
+from problem_definition.objective import power_output, objective
+from problem_definition.constraints import constraint_traction, constraint_reel_speed
 
 # Initial guess
-initial_design = x
+initial_design = np.zeros(6)
 
-initial_design[0] = 15
-initial_design[1] = 0.5
-initial_design[2] = 0.5
-initial_design[3] = 30 * np.pi / 180
-initial_design[4] = 70 * np.pi / 180
-initial_design[5] = 5
+initial_design[0] = 10      # A_proj    0
+initial_design[1] = 0.5     # gamma_in  1
+initial_design[2] = 0.5     # gamma_out 2
+initial_design[3] = 50 * np.pi / 180 # elev_in   3
+initial_design[4] = 30 * np.pi / 180 # elev_out  4
+initial_design[5] = 5       # v_w_n      5
 
-bounds = [(0, 17), (0, 1), (0, 1), (0, np.pi/2), (0, np.pi/2), (0, 10)]
+bounds = [(0, 17), (0, 2.5), (0, 1), (0, 70 * np.pi/180), (0, np.pi/2), (0, 10)]
 
-# Initial guess
-initial_guess = [0.5, 0.5]
+# TODO: make traction a linear constraint
+cons = [NonlinearConstraintLinearConstraint(constraint_traction, lb=(-1, -1), ub=(0, 0)),
+        NonlinearConstraint(constraint_reel_speed, -1, 0)]
+
+method = "SLSQP"
+
 # Perform the optimization
-result = minimize(objective, initial_guess, bounds=bounds, method='L-BFGS-B')
+result = minimize(objective, initial_design, bounds=bounds, method=method,
+                  options={'disp': True},
+                  constraints=cons)
 
-# Extract the optimal values
-optimal_gamma_out, optimal_gamma_in = result.x
-max_electrical_power = -result.fun
+# power output for optimal design
+optimal_power = power_output(result.x)
 
-# Update the optimal values
-gamma_out_n = optimal_gamma_out
-gamma_in_n = optimal_gamma_in
-P_elec_opt_gamma = max_electrical_power
-print(max_electrical_power)
-
-
-
-# Define a function to calculate electrical power
-def electrical_power(gamma_out, gamma_in):
-    power = P_w * A_proj * (
-        eff_out * F_out * (1 - gamma_out) ** 2 -
-        (F_in * (1 + gamma_in) ** 2) / eff_in) * ((gamma_out * gamma_in) / (gamma_out + gamma_in))
-    return power
+print(method)
+print(result.x)

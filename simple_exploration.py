@@ -70,6 +70,14 @@ for cj, gamma_out in enumerate(plot_gamma_data['gamma_out'] ):
     cj += 1
     ci = 0
 
+"""Brute Force Solution"""
+data['P_elec_opt_gamma'] = np.amax(plot_gamma_data['power_array_e'])
+(a, b) = np.where(plot_gamma_data['power_array_e'] == data['P_elec_opt_gamma'])
+
+bf_y_out =  plot_gamma_data['gamma_out'][a][0]
+bf_y_in = plot_gamma_data['gamma_in'][b][0]
+print("Brute Force gamma in, gamma out =", bf_y_in, bf_y_out, "max_power",data['P_elec_opt_gamma']
+      )
 
 
 """%%%%% Optimisation using scipy.optimize.minimize %%%%%"""
@@ -80,7 +88,7 @@ def objective(gamma):
     gamma_out, gamma_in = gamma
     power = data['P_w'] * data['A_proj'] * (
         data['eff_out'] * data['F_out'] * (1 - gamma_out) ** 2 -
-        (data['F_in'] * (1 + gamma_in) ** 2) / data['eff_in']) * ((gamma_out * gamma_in) / (gamma_out + gamma_in))
+        (data['F_in'] * ( gamma_in** 2 + 1 + 2) / data['eff_in']) * ((gamma_out * gamma_in) / (gamma_out + gamma_in)))
     return -power  # Negative because we want to maximize the power
 
 
@@ -90,14 +98,12 @@ def constraint_traction(gamma):
     # Assume gamma_in and gamma_out are the nominal values
     gamma_in, gamma_out = gamma
 
-    T_out_n = 0.5 * data['rho'] * data['v_w_n']  ** 2 * data['A_proj'] * (1 - gamma_out) ** 2 * \
+    T_out_n = 0.5 * data['rho'] * data['v_w_n'] ** 2 * data['A_proj'] * (1 - gamma_out) ** 2 * \
                    data['F_out']
     #
     # # @Winter, what is a_elev_out?
-    # T_out_n_angle = 0.5 * data['rho']  * data['v_w_n'] ** 2 * data['A_proj'] * (
-    #         np.cos(data['a_elev_out']) - gamma_out) ** 2 * data['F_out']
 
-    T_in_n = 0.5 * data['rho'] * data['v_w_n']  ** 2 * data['A_proj'] * (1 - gamma_in) ** 2 * \
+    T_in_n = 0.5 * data['rho'] * data['v_w_n'] ** 2 * data['A_proj'] * (1 - gamma_in) ** 2 * \
                    data['F_in']
 
     return T_out_n, T_in_n
@@ -134,7 +140,7 @@ if __name__ == '__main__':
     print('optimal gamma_in, gamma_out', result.x)
     print('Optimal Power output', max_electrical_power)
 
-    plotting = False
+    plotting = True
 
     if plotting:
         def contour_plot():

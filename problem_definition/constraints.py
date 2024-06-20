@@ -1,13 +1,14 @@
 from constants.constants import *
 import numpy as np
+from problem_definition.objective import power_output
+
+from scipy.optimize import LinearConstraint
 """Constraints"""
 def constraint_traction(x):
-    # TODO: rewrite in negative-null form
-    # Assume gamma_in and gamma_out are the nominal values
     gamma_in, gamma_out = x[1], x[2]
     a_elev_in = x[3]
     a_elev_out = x[4]
-    # v_w_n = x[5]
+    v_w_n = x[5]
     A_proj = x[0]
 
     T_out_elevation = 0.5 * rho * v_w_n ** 2 * A_proj * (
@@ -18,6 +19,21 @@ def constraint_traction(x):
 
     return T_out_elevation/40E3 - 1, T_in_elevation/40E3 - 1
 
+### For linear constraints
+A = np.zeros((6, 6))
+# A[5, 5] = 1 / max_reel_speed / v_w_n - 1
+A[4, 4] = 1 / (np.pi / 2) - 1
+
+lb = np.zeros((6, ))
+lb[5] = -1
+lb[4] = -1
+ub = np.zeros((6, ))
+
 def constraint_reel_speed(x):
-    v_w_n = x[5]
-    return x[1] / max_reel_speed / v_w_n - 1
+    return x[1] / max_reel_speed - 1
+
+def constraint_elev_out(x):
+    return x[4] / (70 * np.pi / 180) - 1
+
+def constraint_power(x):
+    return - power_output(x) / np.sqrt(power_output(x)**2)

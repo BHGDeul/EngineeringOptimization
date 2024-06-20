@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize, NonlinearConstraint
 
-# Data initialization
+# Data initialisation
 v_w_n = 10
 CL_out = 1.06
 A_proj = 16.65
@@ -29,7 +29,7 @@ resolution = 100
 gamma_in_range = np.linspace(0.01, lim, resolution)
 gamma_out_range = np.linspace(0.01, 1, resolution)
 
-# Set empty arrays
+# Initialise empty arrays
 power_array_e = np.zeros((resolution, resolution))
 t_in_array = np.zeros((resolution, resolution))
 t_out_array = np.zeros((resolution, resolution))
@@ -45,7 +45,7 @@ for cj, gamma_out in enumerate(gamma_out_range):
         t_out_array[ci][cj] = 0.5 * rho * v_w_n ** 2 * A_proj * (np.cos(a_elev_out) - gamma_out) ** 2 * F_out
         t_in_array[ci][cj] = 0.5 * rho * v_w_n ** 2 * A_proj * (1 + 2 * gamma_in * np.cos(a_elev_in) + gamma_in ** 2) * F_in
 
-# Optimization
+# Optimisation
 def objective(gamma):
     gamma_out, gamma_in = gamma
     power = P_w * A_proj * (
@@ -60,16 +60,16 @@ bounds = [(0.01, 1), (0.01, lim)]
 # Initial guess
 initial_guess = [0.5, 0.5]
 
-# Perform the optimization
+# Perform the optimisation
 result = minimize(objective, initial_guess, bounds=bounds, method='L-BFGS-B')
 
 
 def plot_result_with_boundaries(result):
-    # Extract the optimal values
+    # Extract optimal values
     optimal_gamma_out, optimal_gamma_in = result.x
     max_electrical_power = -result.fun
 
-    # Plot electrical power array for gammas
+    # Electrical power array for gammas
     plt.figure(figsize=(6, 4))
     contour = plt.contourf(gamma_out_range, gamma_in_range, power_array_e, levels=200, cmap='viridis')
     plt.colorbar(contour, label='Electrical Power (W)')
@@ -77,15 +77,15 @@ def plot_result_with_boundaries(result):
     plt.ylabel('Gamma In')
     plt.title('Electrical Power Distribution with Boundaries')
 
-    # Maximum point
+    # Max
     plt.scatter(optimal_gamma_out, optimal_gamma_in, color='red', label='Max Power', zorder=5)
 
-    # Annotate the points
+    # Annotate
     plt.annotate(f'Max\n({optimal_gamma_out:.2f}, {optimal_gamma_in:.2f})', xy=(optimal_gamma_out, optimal_gamma_in),
                  xytext=(optimal_gamma_out + 0.1, optimal_gamma_in + 0.1),
                  arrowprops=dict(facecolor='red', shrink=0.05))
 
-    # Plot boundary lines
+    # Boundary lines
     plt.contourf(gamma_out_range, gamma_in_range, t_in_array, levels=[T_max_in, max(t_in_array.max(),T_max_in+1)], colors='red',
                  alpha=0.6, hatches=['///'])
     plt.contourf(gamma_out_range, gamma_in_range, t_out_array, levels=[T_max_out, max(t_out_array.max(), T_max_out+1)], colors='blue',
@@ -122,7 +122,6 @@ reel_speed_constraint = NonlinearConstraint(constraint_reel_speed, [0, -1], [1, 
 initial_guess = [0.5, 0.5]
 
 # Perform the optimization
-# TODO: find out how SLSQP algorithm works, only scipy algorithm that supports constraints
 result = minimize(objective, initial_guess, bounds=None, method='SLSQP',
                   constraints=[reel_speed_constraint, traction_constraint],
                   options={'disp': True})

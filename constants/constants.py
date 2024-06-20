@@ -6,8 +6,7 @@ A_proj_list = np.linspace(7, 25, 25)
 F_out_list = np.linspace(10, 150, 20)
 
 CL_out = 1.06
-T_out_target = 10300
-T_out_max = 10300
+max_traction = 10E3
 rho = 1.18
 lc = 250
 CD_out = 0.15

@@ -17,7 +17,7 @@ def constraint_traction(x):
     T_in_elevation = 0.5 * rho * v_w_n ** 2 * A_proj * (
             1 + 2 * gamma_in * np.cos(a_elev_in) + gamma_in**2) * F_in
 
-    return T_out_elevation/40E3 - 1, T_in_elevation/40E3 - 1
+    return T_out_elevation/max_traction - 1, T_in_elevation/max_traction - 1
 
 ### For linear constraints
 A = np.zeros((6, 6))
@@ -36,4 +36,18 @@ def constraint_elev_out(x):
     return x[4] / (70 * np.pi / 180) - 1
 
 def constraint_power(x):
-    return - power_output(x) / np.sqrt(power_output(x)**2)
+    return - power_output(x) / np.sqrt(power_output(x)**2) + 1
+
+def constraint_gamma_out(x):
+    return x[2] - 1
+
+def constraint_area(x):
+    return -x[0]
+
+def constraint_wind_speed(x):
+    return x[5]/10 - 1
+
+def constraint_elev_in(x):
+    return x[3]/(np.pi / 2) - 1
+
+#bounds = [(0, 30), (0, np.inf), (0, 1), (0, np.pi/2), (10 * np.pi/180, 90 * np.pi/180), (0, 10)]

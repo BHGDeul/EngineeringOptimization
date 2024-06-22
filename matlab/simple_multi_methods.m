@@ -52,11 +52,12 @@ objective = @(gamma) -P_w * A_proj * ...
     ((gamma(1) * gamma(2)) / (gamma(1) + gamma(2)));
 
 % Define initial design point
-xq = [0.5, 0.5];
+xq = [0.5, 0.5]%, a_elev_out, a_elev_in];
+
 
 % Define bounds
-lb = [0.01, 0.01];  % Lower bounds for gamma_out and gamma_in
-ub = [1, lim];      % Upper bounds for gamma_out and gamma_in
+lb = [0.01, 0.01, 0, 0];  % Lower bounds for gamma_out and gamma_in
+ub = [1, lim, pi / 2, pi / 2];      % Upper bounds for gamma_out and gamma_in
 
 % Define options for optimization algorithms
 options = optimset('TolX', 1.0e-3, 'MaxFunEvals', 50, 'Display', 'iter');
@@ -128,7 +129,7 @@ text(path(end, 1) + 0.05, path(end, 2) + 0.05, sprintf('Max\n(%.2f, %.2f)', path
 
 % Subplot setup
 figure;
-% Optimization using ga
+% Optimization using Genetic Algorithm
 subplot(2,2,1);
 contourf(gamma_out, gamma_in, power_array_e, 200, 'LineColor', 'none');
 colorbar;
@@ -230,7 +231,7 @@ function [optimum_value, func_evals, path] = run_optimization(initial_point, hi,
 
         % Compute new design point
         xnew = max(min(xq + alphaq * sq, gamma_range(:,2)'), gamma_range(:,1)');
-        
+
         % Plot marker in current design point
         plot(xq(1), xq(2), 'o');
         plot([xq(1), xnew(1)], [xq(2), xnew(2)], 'r-');

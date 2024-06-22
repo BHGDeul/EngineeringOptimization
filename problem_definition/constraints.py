@@ -2,7 +2,6 @@ from constants.constants import *
 import numpy as np
 from problem_definition.objective import power_output
 
-from scipy.optimize import LinearConstraint
 """Constraints"""
 def constraint_traction(x):
     gamma_in, gamma_out = x[1], x[2]
@@ -32,22 +31,5 @@ ub = np.zeros((6, ))
 def constraint_reel_speed(x):
     return x[1] / max_reel_speed - 1
 
-def constraint_elev_out(x):
-    return x[4] / (70 * np.pi / 180) - 1
-
 def constraint_power(x):
     return - power_output(x) / np.sqrt(power_output(x)**2) + 1
-
-def constraint_gamma_out(x):
-    return x[2] - 1
-
-def constraint_area(x):
-    return -x[0]
-
-def constraint_wind_speed(x):
-    return x[5]/10 - 1
-
-def constraint_elev_in(x):
-    return x[3]/(np.pi / 2) - 1
-
-#bounds = [(0, 30), (0, np.inf), (0, 1), (0, np.pi/2), (10 * np.pi/180, 90 * np.pi/180), (0, 10)]

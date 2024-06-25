@@ -49,14 +49,32 @@ dudx2 = (
 )/ (x[2] + x[1])**2
 )
 
+index = ['A_proj', 'gamma_in', 'gamma_out', 'elev_in', 'elev_out', 'v_w_n']
+
 import matplotlib.pyplot as plt
-plt.plot(pertubations, sensitivities[2], color='blue', label='ffd')
-plt.xscale('log')
-plt.title('FFD sensitivity of the power output for \n different pertubations in gamma_out')
-plt.hlines(y=dudx2, xmin=pertubations[0],xmax=pertubations[-1], colors='red', label='analytical')
-plt.xlabel('Pertubation size')
-plt.ylabel('du/dgamma_out')
+
+fig, ax = plt.subplots(1,2, figsize = (8,4))
+
+design_variable = 2
+ax[0].plot(pertubations, sensitivities[design_variable], label='ffd')
+ax[0].set_xscale('log')
+# plt.xscale('log')
+ax[0].set_title(f'Comparison of FFD approximation\n and analytical value of sensitivity \n for {index[design_variable]}')
+ax[0].hlines(y=dudx2, xmin=pertubations[0],xmax=pertubations[-1], colors='red', label='analytical')
+ax[0].set_xlabel('Pertubation size')
+ax[0].set_ylabel(f'du/d{index[design_variable]}')
+
+for design_variable in range(6):
+    ax[1].plot(pertubations, sensitivities[design_variable], label=f'{index[design_variable]}')
+    ax[1].set_xscale('log')
+    ax[1].set_title(f'FFD sensitivity of the power output for \n different pertubations in design_variables')
+    ax[1].set_ylabel(f'du/dx_i')
+    ax[1].set_xlabel('Pertubation size')
+
 plt.legend()
+plt.tight_layout()
 plt.grid()
-plt.savefig('../output/plots/sensitivity_dudx2.png')
+plt.savefig(f'../output/plots/sensitivity_gamma_out.png')
 plt.show()
+# break
+

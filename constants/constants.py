@@ -8,7 +8,7 @@ F_out_list = np.linspace(10, 150, 20)
 CL_out = 1.06
 max_traction = 15E3
 rho = 1.18
-lc = 250
+lc = 2
 CD_out = 0.15
 CD_in = 0.10
 eff_in = 0.639
@@ -21,6 +21,6 @@ max_reel_speed = 2.5
 baseline_power = 20E3
 baseline_area = 16.65
 
-# Intermediate calculations
+# # Intermediate calculations
 F_out = CL_out ** 3 / CD_out ** 2
 F_in = CD_in

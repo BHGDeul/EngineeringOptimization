@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 import numpy as np
 
-def main_aero_function(A_proj, Points, Kite_segments, N_split, AoA_range_out, AoA_range_in, V_wind, Print=False):
+def main_aero_function(A_proj, Points, Kite_segments, N_split, AoA_range_out, AoA_range_in, V_wind, Print):
     import os
     import numpy as np
     import aero_module.functions_VS_LLT as VSM
     import aero_module.coordinates_generation as CGEN
+
 
     script_dir = os.path.dirname(__file__)
 
@@ -19,7 +21,7 @@ def main_aero_function(A_proj, Points, Kite_segments, N_split, AoA_range_out, Ao
     # Definition of the geometry
     Name1 = 'Kite15'
     Atot = A_proj  # Projected area
-    Segments = Kite_segments  # Number of kite segments
+    Segments = int(Kite_segments)  # Number of kite segments
     Points = Points  # Number of points for coord function
     Plotting = False
     Bridles = False
@@ -69,7 +71,7 @@ def main_aero_function(A_proj, Points, Kite_segments, N_split, AoA_range_out, Ao
 
         # Wind speed vector definition
         Umag = V_wind               # Wind speed magnitude
-        aoa = angle*np.pi/180      # Angle of attack
+        aoa = (angle*np.pi/180)      # Angle of attack
         sideslip = 0/180*np.pi  # Sideslip angle
         Uinf = np.array([np.cos(aoa)*np.cos(sideslip),np.sin(sideslip),np.sin(aoa)])*Umag # Wind speed vector
         N = int(len(coords) / 2)  # Number of sections defined
@@ -234,19 +236,39 @@ def main_aero_function(A_proj, Points, Kite_segments, N_split, AoA_range_out, Ao
 
     CD_in = np.average(np.array(CD_in))
     print('Aero Analysis Completed')
+    plt.close()
     return CL_average, CD_average, CL3_CD2_average, CD_in, A_proj, Strut_area_av, flat_area, flat_area_span, chords
 
 # a,b,c,d,e,f,g,h,i = main_aero_function(14.39, 1000000, 12, 5, np.arange(8, 15.5, 0.5), np.arange(-1, 3.5, 0.5), 32.5, False)
 # print(a, b, c, d)
 
 if __name__ == '__main__':
-    A_proj = 17
+    A_proj = 15
     Points = 10000
     Kite_segments = 12
-    N_split = 5
-    AoA_range_out = np.arange(8, 15.5, 0.5)
-    AoA_range_in = np.arange(-1, 3.5, 0.5)
+    N_split = 10
+    AoA_range_out = np.arange(8, 15.5, 1.)
+    AoA_range_in = np.arange(-1, 3.5, 1.)
     V_wind = 32.5
 
     CL_average, CD_average, CL3_CD2_average, CD_in, A_proj, Strut_area_av, flat_area, flat_area_span, chords = \
         main_aero_function(A_proj, Points, Kite_segments, N_split, AoA_range_out, AoA_range_in, V_wind, Print=True)
+
+    # Max
+    # CL = 1.1994666620124053
+    # Max
+    # LD = 5.272387951699156
+    # Max
+    # L3 / D2 = 33.342863886640345
+    # Average
+    # LD = 3.3288556018284985
+    # Average
+    # L3D2 = 13.15605810646234
+    # Average
+    # CD = 0.2654978372008614
+    # Average
+    # CL = 0.8338384261436493
+    # Camille
+    # L3D2 = 8.224769581405369
+
+

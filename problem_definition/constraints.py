@@ -1,6 +1,6 @@
 from constants.constants import *
 import numpy as np
-from problem_definition.objective import power_output
+from problem_definition.objective import power_output, aero_module
 
 """Constraints"""
 def constraint_traction(x):
@@ -9,6 +9,8 @@ def constraint_traction(x):
     a_elev_out = x[4]
     v_w_n = x[5]
     A_proj = x[0]
+
+    # F_out, F_in = aero_module(x)
 
     T_out_elevation = 0.5 * rho * v_w_n ** 2 * A_proj * (
             np.cos(a_elev_out) - gamma_out) ** 2 * F_out

@@ -3,38 +3,44 @@ from scipy.optimize import minimize, NonlinearConstraint
 
 from constants.constants import *
 
-from problem_definition.objective import power_output, objective
+from problem_definition.objective import power_output, objective, aero_module
 from problem_definition.constraints import (constraint_traction,
                                             constraint_reel_speed,
                                             constraint_power)
 
 from plotting.monte_carlo import create_boxplot
 
-index = ['A_proj', 'gamma_in', 'gamma_out', 'elev_in', 'elev_out', 'v_w_n']
+index = ['A_proj', 'gamma_in', 'gamma_out', 'elev_in', 'elev_out', 'v_w_n']#, 'aoa_in']#, 'aoa_in']
 
 import random
 
 # Initial guess
+# initial_design = np.zeros(6)
 initial_design = np.zeros(6)
 
 initial_design[0] = 10      # A_proj    0
-initial_design[1] = 0.5     # gamma_in  1
-initial_design[2] = 0.5     # gamma_out 2
+initial_design[1] = 1.9     # gamma_in  1
+initial_design[2] = 0.2     # gamma_out 2
 initial_design[3] = 50 * np.pi / 180 # elev_in   3
 initial_design[4] = 30 * np.pi / 180 # elev_out  4
 initial_design[5] = 10       # v_w_n      5
-# initial_design[6] = 5        # aoa_max_out
-# initial_design[7] = 5        # aoa_max_in
+# initial_design[6] = -0.4        # aoa_in
 
 
-bounds = [(1, 30), (0.1, np.inf), (0.1, 1), (0, 70 * np.pi/180), (30 * np.pi/180, 40 * np.pi/180), (0, 10)]#, (8, 16), (-1, 16)]
+bounds = [(0.01, 30),
+          (0.1, 2.5),
+          (0.1, 1),
+          (0, 70 * np.pi/180),
+          (30 * np.pi/180, 40 * np.pi/180),
+          (0, 10),
+          # (-1,5)
+          ]
 
-# TODO: make traction a linear constraint
 cons = [NonlinearConstraint(constraint_traction, lb=(-np.inf, -np.inf), ub=(0, 0)),
         NonlinearConstraint(constraint_reel_speed, lb=-np.inf, ub=0),
-        NonlinearConstraint(constraint_power, lb=-np.inf, ub=0)]
+        NonlinearConstraint(constraint_power, lb=-1., ub=0)]
 
-method = "COBYLA" # unconstrained
+method = "COBYLA"
 
 cycles = 1
 store = np.zeros((6, cycles))
@@ -44,7 +50,8 @@ for cycle in range(cycles):
     # initial_design[0] = random.randint(1,30)  # A_proj    0
     # initial_design[1] = random.randint(1, 25) / 10  # gamma_in  1
     # initial_design[2] = random.randint(1, 10) / 10  # gamma_out 2
-    # initial_design[3] = random.randint(0, 90) * np.pi / 180  # elev_in   3
+    # initial_design[3] = random.randint(0, 70) * np.pi / 180  # elev_in   3
+    # initial_design[4] = random.randint(0, 90) * np.pi / 180  # elev_in   3
 
     design = initial_design.copy()
 
@@ -60,9 +67,9 @@ for cycle in range(cycles):
     print(method)
     print(pd.DataFrame(index=index, data=result.x, columns=['value']))
     print('\nPower output', round(power_output((result.x)),2), 'Watt')
-    # print(cycle)
-    # store[:, cycle] = result.x
-    # objective_values[cycle] = objective(result.x)
+#     print(cycle)
+#     store[:, cycle] = result.x
+#     objective_values[cycle] = objective(result.x)
 #
 # create_boxplot(store, objective_values)
 

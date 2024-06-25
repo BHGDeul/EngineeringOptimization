@@ -31,6 +31,7 @@ def Generate_Kite15_coords(Projected_area,segments, Points_no, Plotting, Bridles
     x = a_proj*x
     a = a_proj*1
     b = a_proj*1/Front_ellipse_ratio
+
     projected_span = np.max(x)-np.min(x)
 
     # Generate semi ellipse
@@ -54,7 +55,7 @@ def Generate_Kite15_coords(Projected_area,segments, Points_no, Plotting, Bridles
     arclist = []
     LE_x_segmented1.append(a)
     z_segmented.append(0)
-    for i in range(0, segments, 1):
+    for i in range(0, int(segments), 1):
         arclist.append(arclength - i*arclength/(segments-1))
 
     for length in arclist:
@@ -79,6 +80,7 @@ def Generate_Kite15_coords(Projected_area,segments, Points_no, Plotting, Bridles
                        -projected_span / 2 + 0.54 * (projected_span / 2),
                        0]
     bridle_z_coords = [b - 1.13 * b, b - 0.85 * b, b - 1.62 * b, -10]
+
     strut6_x_loc = -np.array(LE_x_segmented1)
     # strut6_x_loc = np.array([-4.71710426, -3.88796858, -2.41709853, -0.81508341,  0.81505511,  2.41707023, 3.88794028,  4.71709483])
     strut_z_loc = 1/Front_ellipse_ratio * np.sqrt(a**2-strut6_x_loc**2)
@@ -90,8 +92,9 @@ def Generate_Kite15_coords(Projected_area,segments, Points_no, Plotting, Bridles
     # line F3, line F7, line F6, line F2, line F5, line F4, line F1
     index_combos = np.array([[0, 7], [0, 4], [0, 1], [4, 6], [4, 5], [1, 3], [1, 2]])
     #line F1, line F2, line F3, line F4, line F5, line F6, line F7
-    plt.figure()
+
     if Bridles and Plotting:
+        plt.figure()
         list_bridle_length = []
         for i in range(0, len(index_combos)):
             x_plot = np.array([under_bridles_x[index_combos[i, 0]], under_bridles_x[index_combos[i, 1]]])
@@ -112,6 +115,7 @@ def Generate_Kite15_coords(Projected_area,segments, Points_no, Plotting, Bridles
         print(f'Bridle lenght = {bridle_length}')
         print(list_bridle_length)
     if Plotting:
+        plt.figure()
         plt.plot(x, y, label='Front View')
         # plt.scatter(bridle_x_coords, bridle_z_coords, c='r', marker='x')
         # plt.scatter(bridle_x_coords_sym, bridle_z_coords, c='r', marker='x')
@@ -178,7 +182,7 @@ def Generate_Kite15_coords(Projected_area,segments, Points_no, Plotting, Bridles
     #             break
 
     LE_y_segmented = -y_segmented1 - c_tip
-    y_segmented = np.zeros(segments)
+    y_segmented = np.zeros(int(segments))
     y_segmented = np.array(y_segmented)
     z_segmented = np.array(z_segmented)
 
